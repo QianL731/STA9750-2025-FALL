@@ -1,5 +1,26 @@
 [
   {
+    "objectID": "mp01.html",
+    "href": "mp01.html",
+    "title": "Mini Project #1: Netflix Top 10",
+    "section": "",
+    "text": "This project analyzes Netflix’s public Top 10 data to highlight the platform’s most successful original films and TV shows. By examining global and country-level viewership trends, we aim to identify standout content and quantify its impact, providing insights that support Netflix’s strategy of producing high-quality, globally appealing entertainment."
+  },
+  {
+    "objectID": "mp01.html#netflix-captures-indias-heart-with-record-breaking-hindi-hits",
+    "href": "mp01.html#netflix-captures-indias-heart-with-record-breaking-hindi-hits",
+    "title": "Mini Project #1: Netflix Top 10",
+    "section": "Netflix Captures India’s Heart with Record-Breaking Hindi Hits",
+    "text": "Netflix Captures India’s Heart with Record-Breaking Hindi Hits\n\n\nCode\nlibrary(dplyr)\nlibrary(stringr)\n\n# Filter Hindi shows/films in India\nhindi_india &lt;- COUNTRY_TOP_10 %&gt;%\n  filter(country_name == \"India\") %&gt;%\n  filter(str_detect(show_title, regex(\"Hindi\", ignore_case = TRUE)) |\n         str_detect(season_title, regex(\"Hindi\", ignore_case = TRUE))) %&gt;%\n  group_by(show_title) %&gt;%\n  summarise(\n    weeks_top10 = max(cumulative_weeks_in_top_10, na.rm = TRUE),\n    peak_rank   = min(weekly_rank, na.rm = TRUE),\n    .groups = \"drop\"\n  ) %&gt;%\n  arrange(peak_rank, desc(weeks_top10))\n\n# Top Hindi title by longest run\ntop_hindi &lt;- hindi_india %&gt;% slice(1)\n\n# Titles that never appeared in US\nhindi_not_us &lt;- hindi_india %&gt;%\n  anti_join(\n    COUNTRY_TOP_10 %&gt;%\n      filter(country_name == \"United States\") %&gt;%\n      select(show_title) %&gt;% distinct(),\n    by = \"show_title\"\n  )\n\n# Inline values\nnum_hindi_titles  &lt;- nrow(hindi_india)\ntop_hindi_title   &lt;- top_hindi$show_title\ntop_hindi_weeks   &lt;- top_hindi$weeks_top10\nhindi_not_us_count &lt;- nrow(hindi_not_us)\n\nlibrary(ggplot2)\n\ntop5_hindi &lt;- hindi_india %&gt;%\n  slice_max(weeks_top10, n = 5)\n\nggplot(top5_hindi, aes(x = reorder(show_title, weeks_top10), y = weeks_top10)) +\n  geom_col(fill = \"lightblue\") +\n  coord_flip() +\n  labs(\n    title = \"Top Hindi Titles in India by Weeks in Top 10\",\n    x = \"Show Title\",\n    y = \"Weeks in Top 10\"\n  ) +\n  theme_minimal()\n\n\n\n\n\n\n\n\n\nCode\nnum_hindi_titles\n\n\n[1] 30\n\n\nCode\ntop_hindi_title\n\n\n[1] \"RRR (Hindi)\"\n\n\nCode\ntop_hindi_weeks\n\n\n[1] 25\n\n\nCode\nhindi_not_us_count\n\n\n[1] 29\n\n\nNetflix is seeing strong momentum in India, where 30 Hindi-language titles have reached the Top 10. The standout hit, RRR (Hindi), stayed in the Top 10 for 25 weeks, making it one of Netflix India’s longest-running successes. Notably, 29 Hindi titles were popular in India without ever charting in the US — proof of Netflix’s ability to create regionally resonant content."
+  },
+  {
+    "objectID": "mp01.html#netflix-tv-shows-dominate-with-record-global-viewing",
+    "href": "mp01.html#netflix-tv-shows-dominate-with-record-global-viewing",
+    "title": "Mini Project #1: Netflix Top 10",
+    "section": "Netflix TV Shows Dominate with Record Global Viewing",
+    "text": "Netflix TV Shows Dominate with Record Global Viewing\n\n\nCode\nlibrary(dplyr)\nlibrary(stringr)\n\n# Summarize top global TV shows\nglobal_tv &lt;- GLOBAL_TOP_10 %&gt;%\n  filter(str_detect(category, \"TV\")) %&gt;%\n  group_by(show_title) %&gt;%\n  summarise(\n    total_hours = sum(weekly_hours_viewed, na.rm = TRUE),\n    weeks_top10 = max(cumulative_weeks_in_top_10, na.rm = TRUE),\n    .groups = \"drop\"\n  ) %&gt;%\n  arrange(desc(total_hours))\n\n# Inline values\ntop_tv_title   &lt;- global_tv$show_title[1]\ntop_tv_hours   &lt;- global_tv$total_hours[1]\ntop_tv_weeks   &lt;- global_tv$weeks_top10[1]\ntotal_tv_titles &lt;- nrow(global_tv)\n\ntop5_tv &lt;- global_tv %&gt;%\n  slice_max(total_hours, n = 5)\n\nggplot(top5_tv, aes(x = reorder(show_title, total_hours), y = total_hours)) +\n  geom_col(fill = \"lightblue\") +\n  coord_flip() +\n  labs(\n    title = \"Top 5 Global TV Series by Hours Viewed\",\n    x = \"Show Title\",\n    y = \"Total Hours Viewed\"\n  ) +\n  theme_minimal()\n\n\n\n\n\n\n\n\n\nCode\ntop_tv_title\n\n\n[1] \"Squid Game\"\n\n\nCode\ntop_tv_hours\n\n\n[1] 5048300000\n\n\nCode\ntop_tv_weeks\n\n\n[1] 32\n\n\nCode\ntotal_tv_titles\n\n\n[1] 1035\n\n\nNetflix continues to set the standard for global television, with 1035 different TV series breaking into the worldwide Top 10. The standout hit, Squid Game, has amassed over 5,048,300,000 hours viewed and stayed in the Top 10 for 32 weeks, underscoring the platform’s unmatched reach. With this momentum, Netflix TV is not only entertaining audiences everywhere but also proving the long-term strength of serialized storytelling in the streaming era."
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "STA 9750 - QIAN LIN",
@@ -11,6 +32,6 @@
     "href": "index.html#dynamic-code-last-updated",
     "title": "STA 9750 - QIAN LIN",
     "section": "Dynamic code / Last updated",
-    "text": "Dynamic code / Last updated\n\nLast Updated: Tuesday 09 09, 2025 at 21:19PM"
+    "text": "Dynamic code / Last updated\n\nLast Updated: Wednesday 10 29, 2025 at 23:10PM\n\n\n\nThe downloaded binary packages are in\n    /var/folders/hd/lg4zc91s6jq80t9czt7qftdc0000gn/T//RtmpCteeg1/downloaded_packages"
   }
 ]
