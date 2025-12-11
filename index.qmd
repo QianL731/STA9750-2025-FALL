@@ -2,12 +2,13 @@
 title: "STA 9750 - QIAN LIN"
 ---
 
-Hello — I am **QIAN LIN**. This site contains course project materials for STA 9750.
+<div class="intro-center">
+  <h1>Welcome to My STA 9750 Project Portfolio</h1>
+  <p>Hello — I’m <b>QIAN LIN</b>, a Master’s student at Baruch College.</p>
+  <a class="btn btn-primary" href="files/QianLin_Resume.pdf" target="_blank">📄 Download My Resume</a>
+</div>
 
-Download my resume:
-[Resume (PDF)](files/QianLin_Resume.pdf){target="_blank"}
-
-## Dynamic code / Last updated
+# Dynamic code / Last updated
 
 ```{r}
 #| include: false
@@ -36,4 +37,40 @@ leaflet() |>
   addPopups(baruch_longitude, baruch_latitude, 
             "I am a Master's student at <b>Baruch College</b>!")
 ```
+
+
+# Mini Projects
+
+<div class="project-card">
+  <h3>Mini Project 1 — Netflix Top 10 Analysis</h3>
+  <p>Exploring streaming trends using title-level analytics.</p>
+  <a href="mp01.html">View Project →</a>
+</div>
+
+<div class="project-card">
+  <h3>Mini Project 2 — Housing, Income & Growth</h3>
+  <p>ACS socioeconomic trends and NYC building-permit patterns.</p>
+  <a href="mp02.html">View Project →</a>
+</div>
+
+<div class="project-card">
+  <h3>Mini Project 3 — NYC Trees & Council Districts</h3>
+  <p>Spatial analysis linking tree density and district-level characteristics.</p>
+  <a href="mp03.html">View Project →</a>
+</div>
+
+<div class="project-card">
+  <h3>Mini Project 4 — CES Employment & Revisions</h3>
+  <p>Time series trends and BLS revision patterns.</p>
+  <a href="mp04.html">View Project →</a>
+</div>
+
+<div class="footer">
+  ✨ Thank you for visiting my STA 9750 project portfolio! ✨  
+  <br><br>
+  © 2025 Qian Lin — Baruch College
+</div>
+
+
+
 

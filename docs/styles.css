@@ -1,0 +1,48 @@
+body {
+  background-color: #ffffff;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 600;
+}
+
+section {
+  margin-bottom: 2.2rem;
+}
+
+.intro-center {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+.btn-primary {
+  font-size: 1.05rem;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+.project-card {
+  padding: 18px;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  background: #fafafa;
+  margin-bottom: 18px;
+  transition: 0.25s ease;
+}
+
+.project-card:hover {
+  background: #f0f8ff;
+  transform: translateY(-3px);
+}
+
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  padding: 25px 0;
+  color: #6c757d;
+  border-top: 1px solid #e6e6e6;
+  font-size: 0.95rem;
+}

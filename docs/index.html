@@ -40,7 +40,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-76c7e95723c59cbc01dc74e89f55a0ab.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-f245066ca199b7326ac6b360085ddf3a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,6 +68,7 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<style>html{ scroll-behavior: smooth; }</style>
 <link href="site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
 <script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -80,9 +81,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/leaflet-binding-2.2.3/leaflet.js"></script>
 
 
+<link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -95,18 +97,68 @@ ul.task-list li input[type="checkbox"] {
     <span class="navbar-title">STA 9750 Submission Material</span>
     </a>
   </div>
-        <div class="quarto-navbar-tools tools-end">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-mini-projects" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Mini Projects</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-mini-projects">    
+        <li>
+    <a class="dropdown-item" href="./mp01.html">
+ <span class="dropdown-text">MP01 – Netflix</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./mp02.html">
+ <span class="dropdown-text">MP02 – Housing &amp; Income</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./mp03.html">
+ <span class="dropdown-text">MP03 – Trees &amp; Districts</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./mp04.html">
+ <span class="dropdown-text">MP04 – CES Employment</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./files/QianLin_Resume.pdf"> 
+<span class="menu-text">Resume</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#dynamic-code-last-updated" id="toc-dynamic-code-last-updated" class="nav-link active" data-scroll-target="#dynamic-code-last-updated">Dynamic code / Last updated</a></li>
+  <li><a href="#mini-projects" id="toc-mini-projects" class="nav-link" data-scroll-target="#mini-projects">Mini Projects</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page-right" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -115,7 +167,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page-right">
 
     
   
@@ -127,17 +179,67 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Hello — I am <strong>QIAN LIN</strong>. This site contains course project materials for STA 9750.</p>
-<p>Download my resume: <a href="files/QianLin_Resume.pdf" target="_blank">Resume (PDF)</a></p>
-<section id="dynamic-code-last-updated" class="level2">
-<h2 class="anchored" data-anchor-id="dynamic-code-last-updated">Dynamic code / Last updated</h2>
+<div class="intro-center">
+<h1>
+Welcome to My STA 9750 Project Portfolio
+</h1>
+<p>
+Hello — I’m <b>QIAN LIN</b>, a Master’s student at Baruch College.
+</p>
+<p><a class="btn btn-primary" href="files/QianLin_Resume.pdf" target="_blank">📄 Download My Resume</a></p>
+</div>
+<section id="dynamic-code-last-updated" class="level1">
+<h1>Dynamic code / Last updated</h1>
 <hr>
-<p>Last Updated: Wednesday 10 29, 2025 at 23:16PM</p>
+<p>Last Updated: Thursday 12 11, 2025 at 13:04PM</p>
 <div class="cell">
 <div class="cell-output-display">
-<div class="leaflet html-widget html-fill-item" id="htmlwidget-c2356218efe440925311" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-c2356218efe440925311">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"https://openstreetmap.org/copyright/\">OpenStreetMap<\/a>,  <a href=\"https://opendatacommons.org/licenses/odbl/\">ODbL<\/a>"}]},{"method":"addPopups","args":[40.75028,-73.98333,"I am a Master's student at <b>Baruch College<\/b>!",null,null,{"maxWidth":300,"minWidth":50,"autoPan":true,"keepInView":false,"closeButton":true,"className":""}]}],"setView":[[40.75028,-73.98333],17,[]],"limits":{"lat":[40.75028,40.75028],"lng":[-73.98333,-73.98333]}},"evals":[],"jsHooks":[]}</script>
+<div class="leaflet html-widget html-fill-item" id="htmlwidget-f46a62901202f27e80c0" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-f46a62901202f27e80c0">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"https://openstreetmap.org/copyright/\">OpenStreetMap<\/a>,  <a href=\"https://opendatacommons.org/licenses/odbl/\">ODbL<\/a>"}]},{"method":"addPopups","args":[40.75028,-73.98333,"I am a Master's student at <b>Baruch College<\/b>!",null,null,{"maxWidth":300,"minWidth":50,"autoPan":true,"keepInView":false,"closeButton":true,"className":""}]}],"setView":[[40.75028,-73.98333],17,[]],"limits":{"lat":[40.75028,40.75028],"lng":[-73.98333,-73.98333]}},"evals":[],"jsHooks":[]}</script>
 </div>
+</div>
+</section>
+<section id="mini-projects" class="level1">
+<h1>Mini Projects</h1>
+<div class="project-card">
+<h3 class="anchored" data-anchor-id="mini-projects">
+Mini Project 1 — Netflix Top 10 Analysis
+</h3>
+<p>
+Exploring streaming trends using title-level analytics.
+</p>
+<p><a href="mp01.html">View Project →</a></p>
+</div>
+<div class="project-card">
+<h3 class="anchored">
+Mini Project 2 — Housing, Income &amp; Growth
+</h3>
+<p>
+ACS socioeconomic trends and NYC building-permit patterns.
+</p>
+<p><a href="mp02.html">View Project →</a></p>
+</div>
+<div class="project-card">
+<h3 class="anchored">
+Mini Project 3 — NYC Trees &amp; Council Districts
+</h3>
+<p>
+Spatial analysis linking tree density and district-level characteristics.
+</p>
+<p><a href="mp03.html">View Project →</a></p>
+</div>
+<div class="project-card">
+<h3 class="anchored">
+Mini Project 4 — CES Employment &amp; Revisions
+</h3>
+<p>
+Time series trends and BLS revision patterns.
+</p>
+<p><a href="mp04.html">View Project →</a></p>
+</div>
+<div class="footer">
+<p>✨ Thank you for visiting my STA 9750 project portfolio! ✨<br>
+<br><br> © 2025 Qian Lin — Baruch College</p>
 </div>
 
 
@@ -217,7 +319,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/<QianL0731>\.github\.io\/STA9750-2025-FALL\/");
+        var filterRegex = new RegExp("https:\/\/QianL731\.github\.io\/STA9750-2025-FALL\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -549,4 +651,5 @@ ul.task-list li input[type="checkbox"] {
 
 
 
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>
