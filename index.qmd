@@ -1,5 +1,6 @@
 ---
 title: "STA 9750 - QIAN LIN"
+format: html
 ---
 
 <div class="intro-center">
