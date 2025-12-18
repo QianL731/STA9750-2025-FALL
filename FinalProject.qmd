@@ -1,0 +1,533 @@
+---
+title: "Final Project"
+author: "Qian Lin"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    code-summary: "Show code"
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+# Data Preparation 
+
+```{r}
+library(httr2)
+library(readr)
+library(dplyr)
+library(stringr)
+
+base_url  <- "https://data.cityofnewyork.us/resource/erm2-nwe9.csv"
+batch_dir <- "data/311_batch"          # folder for per-batch files
+batch_pattern <- "^nyc_311_2024_batch_(\\d+)\\.csv$"
+
+cols <- c(
+  "unique_key",
+  "created_date",
+  "agency",
+  "complaint_type",
+  "descriptor",
+  "location_type",
+  "incident_zip",
+  "incident_address",
+  "street_name",
+  "cross_street_1",
+  "cross_street_2",
+  "intersection_street_1",
+  "intersection_street_2",
+  "address_type",
+  "city",
+  "landmark",
+  "borough",
+  "x_coordinate_state_plane",
+  "y_coordinate_state_plane",
+  "latitude",
+  "longitude",
+  "location"
+)
+
+where_2024 <- "created_date between '2024-01-01T00:00:00' and '2024-12-31T23:59:59'"
+batch_size <- 50000
+
+# Force consistent column types (all character to avoid bind_rows issues)
+col_spec <- cols(.default = col_character())
+
+#-------------------------------------------------------------------
+# Helper: figure out where to resume (batch index + offset)
+#-------------------------------------------------------------------
+get_resume_state <- function() {
+  if (!dir.exists(batch_dir)) {
+    dir.create(batch_dir, recursive = TRUE)
+    return(list(next_batch_id = 1L, offset = 0L))
+  }
+  
+  existing_files <- list.files(batch_dir, pattern = batch_pattern, full.names = FALSE)
+  
+  if (length(existing_files) == 0) {
+    return(list(next_batch_id = 1L, offset = 0L))
+  }
+  
+  # Extract batch numbers from filenames
+  batch_nums <- str_match(existing_files, batch_pattern)[, 2]
+  batch_nums <- as.integer(batch_nums[!is.na(batch_nums)])
+  
+  max_batch <- max(batch_nums)
+  
+  # Each batch uses limit = batch_size and no overlap,
+  # so starting offset for the *next* batch is:
+  offset <- (max_batch) * batch_size
+  
+  list(next_batch_id = max_batch + 1L, offset = offset)
+}
+
+#-------------------------------------------------------------------
+# Download in batches with httr2, writing each batch to disk
+#-------------------------------------------------------------------
+download_311_2024_batches <- function() {
+  resume <- get_resume_state()
+  batch_id <- resume$next_batch_id
+  offset   <- resume$offset
+  
+  message(sprintf("Starting (or resuming) at batch %d, offset %d", batch_id, offset))
+  
+  repeat {
+    message(sprintf("Requesting batch %d (offset = %d)...", batch_id, offset))
+    
+    req <- request(base_url) |>
+      req_url_query(
+        "$select" = paste(cols, collapse = ","),
+        "$where"  = where_2024,
+        "$limit"  = batch_size,
+        "$offset" = offset
+      )
+    
+    resp <- req |> req_perform()
+    
+    raw_csv <- resp |> resp_body_raw()
+    chunk   <- read_csv(raw_csv, col_types = col_spec, show_col_types = FALSE)
+    
+    if (nrow(chunk) == 0) {
+      message("No more rows returned; finished downloading.")
+      break
+    }
+    
+    # Write this batch immediately to disk
+    out_path <- file.path(batch_dir, sprintf("nyc_311_2024_batch_%04d.csv", batch_id))
+    write_csv(chunk, out_path)
+    message(sprintf("  Retrieved %d rows and wrote '%s'.", nrow(chunk), out_path))
+    
+    if (nrow(chunk) < batch_size) {
+      message("Last (partial) batch received; stopping.")
+      break
+    }
+    
+    offset   <- offset + batch_size
+    batch_id <- batch_id + 1L
+    
+    Sys.sleep(0.25)  # be polite to the API
+  }
+}
+
+```
+
+```{r}
+# write and read final file 
+final_file <- "data/nyc_311_2024_full.csv" 
+
+load_all_311_2024_batches <- function(write_final = FALSE) {
+  if (!dir.exists(batch_dir)) {
+    stop("Batch directory does not exist: ", batch_dir)
+  }
+  
+  files <- list.files(batch_dir, pattern = batch_pattern, full.names = TRUE)
+  
+  if (length(files) == 0) {
+    stop("No batch files found in: ", batch_dir)
+  }
+  
+  message(sprintf("Loading %d batch files...", length(files)))
+  
+  dfs <- lapply(files, function(f) {
+    read_csv(f, col_types = col_spec, show_col_types = FALSE)
+  })
+  
+  df <- bind_rows(dfs)
+  
+  if (write_final) {
+    dir.create(dirname(final_file), recursive = TRUE, showWarnings = FALSE)
+    write_csv(df, final_file)
+    message(sprintf("Wrote combined data to '%s'.", final_file))
+  }
+  
+  df
+}
+
+#-------------------------------------------------------------------
+# use final combined file if present; otherwise build it
+#-------------------------------------------------------------------
+if (file.exists(final_file)) {
+  message(sprintf("Final file '%s' exists. Loading for analysis...", final_file))
+  data_311_2024 <- read_csv(final_file, col_types = col_spec, show_col_types = FALSE)
+} else {
+  message(sprintf("Final file '%s' not found. Ensuring batches are downloaded...", final_file))
+  
+  # This will resume from whatever batches we have
+  download_311_2024_batches()
+  
+  # Load all batches, write final file, and return combined df
+  data_311_2024 <- load_all_311_2024_batches(write_final = TRUE)
+}
+
+# Now ready for analysis
+str(data_311_2024)
+
+```
+
+```{r}
+## ============================================================
+## Fixed working downloader for DOT Automated Traffic Volume Counts
+## Dataset: 7ym2-wayt
+## ============================================================
+
+library(httr2)
+library(readr)
+library(dplyr)
+library(stringr)
+
+traffic_url       <- "https://data.cityofnewyork.us/resource/7ym2-wayt.csv"
+traffic_batch_dir <- "data/traffic_batches"
+traffic_pattern   <- "^traffic_batch_(\\d+)\\.csv$"
+
+traffic_batch_size <- 50000
+traffic_final_file <- "data/traffic_full.csv"
+
+traffic_col_spec <- cols(.default = col_character())
+
+# --------------------------------------------------------------
+# Figure out resume offset
+# --------------------------------------------------------------
+traffic_resume <- function() {
+  if (!dir.exists(traffic_batch_dir)) {
+    dir.create(traffic_batch_dir, recursive = TRUE)
+    return(list(next_batch = 1, offset = 0))
+  }
+  
+  files <- list.files(traffic_batch_dir, pattern = traffic_pattern, full.names = FALSE)
+  
+  if (length(files) == 0)
+    return(list(next_batch = 1, offset = 0))
+  
+  nums <- str_match(files, traffic_pattern)[,2] |> as.integer()
+  max_batch <- max(nums)
+  offset <- max_batch * traffic_batch_size
+  
+  list(next_batch = max_batch + 1, offset = offset)
+}
+
+# --------------------------------------------------------------
+# Batch downloader (no $select or $where → works for all columns)
+# --------------------------------------------------------------
+download_traffic_batches <- function() {
+  r <- traffic_resume()
+  batch <- r$next_batch
+  offset <- r$offset
+  
+  message(sprintf("Traffic download: resuming at batch %d, offset %d", batch, offset))
+  
+  repeat {
+    message(sprintf("Requesting batch %d (offset = %d)...", batch, offset))
+    
+    req <- request(traffic_url) |>
+      req_url_query(
+        "$limit"  = traffic_batch_size,
+        "$offset" = offset
+      )
+    
+    resp <- req |> req_perform()
+    
+    raw <- resp |> resp_body_raw()
+    df  <- read_csv(raw, col_types = traffic_col_spec, show_col_types = FALSE)
+    
+    if (nrow(df) == 0) {
+      message("No more traffic rows. Done.")
+      break
+    }
+    
+    out <- file.path(
+      traffic_batch_dir,
+      sprintf("traffic_batch_%04d.csv", batch)
+    )
+    
+    write_csv(df, out)
+    message(sprintf("  Wrote %d rows → %s", nrow(df), out))
+    
+    if (nrow(df) < traffic_batch_size) {
+      message("Last partial batch received. Finished.")
+      break
+    }
+    
+    batch  <- batch + 1
+    offset <- offset + traffic_batch_size
+    Sys.sleep(0.25)
+  }
+}
+
+# --------------------------------------------------------------
+# Combine batches
+# --------------------------------------------------------------
+load_traffic_batches <- function(write_final = FALSE) {
+  files <- list.files(traffic_batch_dir, pattern = traffic_pattern, full.names = TRUE)
+  
+  if (length(files) == 0)
+    stop("No traffic batch files found.")
+  
+  message(sprintf("Loading %d traffic batches...", length(files)))
+  
+  dfs <- lapply(files, read_csv, col_types = traffic_col_spec, show_col_types = FALSE)
+  df <- bind_rows(dfs)
+  
+  if (write_final) {
+    write_csv(df, traffic_final_file)
+    message(sprintf("Wrote combined traffic file → %s", traffic_final_file))
+  }
+  
+  df
+}
+
+# --------------------------------------------------------------
+# Use existing combined file or download
+# --------------------------------------------------------------
+if (file.exists(traffic_final_file)) {
+  message("Traffic full file exists. Loading...")
+  traffic_data <- read_csv(traffic_final_file, col_types = traffic_col_spec, show_col_types = FALSE)
+} else {
+  message("Traffic full file missing. Downloading now...")
+  download_traffic_batches()
+  traffic_data <- load_traffic_batches(write_final = TRUE)
+}
+
+str(traffic_data)
+```
+
+# Visualization
+## Step 1 — Clean borough names in traffic data
+```{r}
+traffic_clean <- traffic_data |>
+  mutate(
+    boro = toupper(boro)   # convert to uppercase to match 311 dataset
+  )
+```
+
+## Step 2 - Clean borough names in 311 data and filter valid ones
+```{r}
+street_damage <- data_311_2024 |>
+  filter(str_detect(tolower(complaint_type),
+                    "street condition|pothole|sidewalk")) |>
+  mutate(
+    borough = toupper(borough)
+  ) |>
+  filter(borough %in% c("MANHATTAN", "BROOKLYN", "QUEENS", "BRONX", "STATEN ISLAND")) |>
+  group_by(borough) |>
+  summarise(
+    street_damage_complaints = n(),
+    .groups = "drop"
+  ) |>
+  rename(boro = borough)
+```
+
+## Step 3 — Aggregate traffic by cleaned borough
+```{r}
+traffic_boro <- traffic_clean |>
+  group_by(boro) |>
+  summarise(
+    traffic_volume = sum(as.numeric(vol), na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+## Step 4 — Merge
+```{r}
+merged_data <- inner_join(street_damage, traffic_boro, by = "boro")
+merged_data
+```
+
+```{r}
+library(dplyr)
+library(sf)
+library(tidyr)
+library(stringr)
+
+# ------------------------------------------------------------
+# 1. Clean traffic data (segment-level)
+# ------------------------------------------------------------
+traffic_clean <- traffic_data |>
+  mutate(
+    segment_id     = segmentid,
+    traffic_volume = as.numeric(vol)
+  ) |>
+  filter(
+    !is.na(segment_id),
+    !is.na(traffic_volume),
+    !is.na(wktgeom)
+  )
+
+# ------------------------------------------------------------
+# 2. Filter 311 street-condition complaints
+# ------------------------------------------------------------
+street_311 <- data_311_2024 |>
+  filter(
+    grepl("pothole|street condition|sidewalk",
+          complaint_type, ignore.case = TRUE),
+    !is.na(longitude),
+    !is.na(latitude)
+  ) |>
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) |>
+  st_transform(2263)   # NYC State Plane (meters)
+
+# ------------------------------------------------------------
+# 3. Convert traffic segments to sf
+# ------------------------------------------------------------
+traffic_sf <- traffic_clean |>
+  st_as_sf(wkt = "wktgeom", crs = 4326) |>
+  st_transform(2263)
+
+# ------------------------------------------------------------
+# 4. Spatially match complaints to nearest traffic segment
+# ------------------------------------------------------------
+joined_311 <- st_join(
+  street_311,
+  traffic_sf,
+  join = st_nearest_feature,
+  left = FALSE
+)
+
+# ------------------------------------------------------------
+# 5. Count complaints per street segment
+# ------------------------------------------------------------
+complaints_per_segment <- joined_311 |>
+  st_drop_geometry() |>
+  group_by(segment_id) |>
+  summarise(
+    complaints = n(),
+    .groups = "drop"
+  )
+
+# ------------------------------------------------------------
+# 6. Compute segment length SAFELY (sf-correct)
+# ------------------------------------------------------------
+segment_lengths_vec <- as.numeric(
+  sf::st_length(sf::st_geometry(traffic_sf))
+)
+
+segment_lengths <- traffic_sf |>
+  st_drop_geometry() |>
+  mutate(
+    seg_length_meters = segment_lengths_vec,
+
+    road_type = if ("roadway_type" %in% names(traffic_sf)) {
+      traffic_sf$roadway_type
+    } else {
+      "Local"
+    },
+
+    traffic_volume = as.numeric(traffic_volume)
+  ) |>
+  select(
+    segment_id,
+    road_type,
+    traffic_volume,
+    seg_length_meters
+  )
+
+# ------------------------------------------------------------
+# 7. Final segment dataset
+# ------------------------------------------------------------
+segment_data <- segment_lengths |>
+  left_join(complaints_per_segment, by = "segment_id") |>
+  mutate(
+    complaints = tidyr::replace_na(complaints, 0)
+  )
+
+# ------------------------------------------------------------
+# 8. Analysis-ready dataset
+# ------------------------------------------------------------
+segment_analysis <- segment_data |>
+  filter(seg_length_meters > 0) |>
+  mutate(
+    complaint_rate = (complaints / seg_length_meters) * 100,
+    road_type = str_to_title(road_type)
+  )
+
+glimpse(segment_analysis)
+```
+
+## Visualization 1 — Traffic vs Complaint Rate (by Road Type)
+
+Purpose: Shows the direction and strength of the relationship.
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(scales)
+
+merged_data |>
+  arrange(desc(traffic_volume)) |>
+  ggplot(
+    aes(
+      x = reorder(boro, traffic_volume),
+      y = street_damage_complaints
+    )
+  ) +
+  geom_col(fill = "steelblue", alpha = 0.85, width = 0.7) +
+  coord_flip() +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Street-Damage Complaints by Traffic Volume",
+    subtitle = "NYC Boroughs, 311 Street Condition Complaints vs DOT Traffic Volume (2024)",
+    x = "Borough",
+    y = "Total Street-Damage Complaints"
+  ) +
+  theme_minimal(base_size = 14)
+```
+
+## VISUALIZATION 2 — Average Complaints by Traffic Level
+Purpose： 
+
+Shows a step-up pattern from low → medium → high traffic, making the relationship easy to interpret.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+
+merged_data |>
+  mutate(
+    traffic_level = cut(
+      traffic_volume,
+      breaks = quantile(traffic_volume, probs = c(0, 0.33, 0.66, 1)),
+      labels = c("Low Traffic", "Medium Traffic", "High Traffic"),
+      include.lowest = TRUE
+    )
+  ) |>
+  group_by(traffic_level) |>
+  summarise(
+    avg_street_damage = mean(street_damage_complaints),
+    .groups = "drop"
+  ) |>
+  ggplot(aes(x = traffic_level, y = avg_street_damage, fill = traffic_level)) +
+  geom_col(width = 0.6, alpha = 0.85) +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Average Street-Damage Complaints by Traffic Level",
+    subtitle = "Boroughs grouped into low, medium, and high traffic categories",
+    x = "Traffic Level",
+    y = "Average Street-Damage Complaints"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(legend.position = "none")
+```
+
