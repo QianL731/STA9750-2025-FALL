@@ -1,59 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://&lt;QianL0731&gt;.github.io/STA9750-2025-FALL/mp02.html</loc>
-    <lastmod>2025-10-30T03:36:36.755Z</lastmod>
-  </url>
-  <url>
-    <loc>https://&lt;QianL0731&gt;.github.io/STA9750-2025-FALL/mp01.html</loc>
-    <lastmod>2025-10-04T02:55:10.333Z</lastmod>
-  </url>
-  <url>
-    <loc>https://&lt;QianL0731&gt;.github.io/STA9750-2025-FALL/mp03.html</loc>
-    <lastmod>2025-11-14T04:53:33.485Z</lastmod>
-  </url>
-  <url>
-    <loc>https://&lt;QianL0731&gt;.github.io/STA9750-2025-FALL/FinalProject.html</loc>
-    <lastmod>2025-12-11T04:22:45.163Z</lastmod>
-  </url>
-  <url>
-    <loc>https://&lt;QianL0731&gt;.github.io/STA9750-2025-FALL/mp04.html</loc>
-    <lastmod>2025-12-04T04:52:24.189Z</lastmod>
-  </url>
-  <url>
-    <loc>https://&lt;QianL0731&gt;.github.io/STA9750-2025-FALL/index.html</loc>
-    <lastmod>2025-12-11T17:51:37.833Z</lastmod>
-  </url>
-  <url>
-    <loc>https://&lt;QianL0731&gt;.github.io/STA9750-2025-FALL/mp004.html</loc>
-    <lastmod>2025-12-04T04:35:58.026Z</lastmod>
-  </url>
-  <url>
-    <loc>https://QianL731.github.io/STA9750-2025-FALL/index.html</loc>
-    <lastmod>2025-12-18T15:51:59.399Z</lastmod>
-  </url>
-  <url>
     <loc>https://QianL731.github.io/STA9750-2025-FALL/mp01.html</loc>
     <lastmod>2025-10-04T02:55:10.333Z</lastmod>
-  </url>
-  <url>
-    <loc>https://QianL731.github.io/STA9750-2025-FALL/mp02.html</loc>
-    <lastmod>2025-10-30T03:36:36.755Z</lastmod>
   </url>
   <url>
     <loc>https://QianL731.github.io/STA9750-2025-FALL/mp03.html</loc>
     <lastmod>2025-11-14T04:53:33.485Z</lastmod>
   </url>
   <url>
-    <loc>https://QianL731.github.io/STA9750-2025-FALL/mp04.html</loc>
-    <lastmod>2025-12-04T04:52:24.189Z</lastmod>
+    <loc>https://QianL731.github.io/STA9750-2025-FALL/Individual_Report.html</loc>
+    <lastmod>2025-12-16T23:04:19.571Z</lastmod>
   </url>
   <url>
     <loc>https://QianL731.github.io/STA9750-2025-FALL/FinalProject.html</loc>
     <lastmod>2025-12-15T17:53:15.359Z</lastmod>
   </url>
   <url>
-    <loc>https://QianL731.github.io/STA9750-2025-FALL/Individual_Report.html</loc>
-    <lastmod>2025-12-16T23:04:19.571Z</lastmod>
+    <loc>https://QianL731.github.io/STA9750-2025-FALL/index.html</loc>
+    <lastmod>2025-12-18T15:51:59.399Z</lastmod>
+  </url>
+  <url>
+    <loc>https://QianL731.github.io/STA9750-2025-FALL/mp04.html</loc>
+    <lastmod>2025-12-04T04:52:24.189Z</lastmod>
+  </url>
+  <url>
+    <loc>https://QianL731.github.io/STA9750-2025-FALL/mp02.html</loc>
+    <lastmod>2025-10-30T03:36:36.755Z</lastmod>
   </url>
 </urlset>
